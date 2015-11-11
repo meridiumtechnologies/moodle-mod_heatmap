@@ -1,0 +1,63 @@
+.toggle-view {
+	list-style:none;
+	font-family:arial;
+	font-size:11px;
+	margin:0;
+	padding:0;
+}
+
+.toggle-view li {
+	margin:10px;
+	border-bottom:1px solid #ccc;
+	position:relative;
+	cursor:pointer;
+	float: left;
+	width: 200px;
+}
+
+.toggle-view li ul {
+	margin-left: 5px;
+}
+
+.toggle-view li ul li {
+	float: none;
+	width: 180px;
+	border:none;
+	list-style: none;
+}
+
+.toggle-view h3 {
+	margin:0;
+	font-size:14px;
+	line-height: 20px;
+}
+
+.toggle-view span {
+	position:absolute;
+	right:5px; top:10px;
+	color:#ccc;
+	font-size:13px;
+	display:inline;
+}
+
+.toggle-view .panel {
+	margin:5px 0;
+	display:none;
+}
+.datetime {
+	color: #979797;
+	font-size: 75%;
+}
+
+.toggle-view img {
+	margin:0 10px 0 -10px;
+
+}
+
+.totalparticipants {
+	margin: 10px;
+}
+
+.totalparticipants .total {
+	color: #b41727;
+}
