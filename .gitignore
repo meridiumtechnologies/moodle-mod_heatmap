@@ -1,3 +1,5 @@
 .DS_Store
 .idea
 error_log
+data/breakdown.html
+data/data.js
