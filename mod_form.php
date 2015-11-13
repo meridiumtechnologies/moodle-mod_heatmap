@@ -66,10 +66,13 @@ class mod_heatmap_mod_form extends moodleform_mod
 
         //-------------------------------------------------------
 
-        //-------------------------------------------------------
-        // Add filemanager for monthly statistics
+        // Heatmap settings
         $mform->addElement('header', 'amMapfieldset', get_string('amMapfieldset', 'heatmap'));
-        $mform->addElement('static', 'label1', 'heatmapsetting1', 'Heatmap settings go here. TO BE COMPLETED!');
+        $mform->addElement('selectyesno', 'displaytotal', get_string('displaytotal', 'heatmap'));
+        $mform->setDefault('displaytotal', 1);
+
+        $mform->addElement('selectyesno', 'displaycontinentbreakdown', get_string('displaycontinentbreakdown', 'heatmap'));
+        $mform->setDefault('displaycontinentbreakdown', 1);
 
         //-------------------------------------------------------
         // Add filemanager for monthly statistics

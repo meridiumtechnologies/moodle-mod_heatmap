@@ -29,7 +29,7 @@ require_once(dirname(dirname(dirname($_SERVER["SCRIPT_FILENAME"]))).'/config.php
 require_once(dirname(__FILE__).'/lib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
-$n  = optional_param('n', 0, PARAM_INT);  // ... heatmap instance ID - it should be named as the first character of the module.
+$n  = optional_param('h', 0, PARAM_INT);  // ... heatmap instance ID - it should be named as the first character of the module.
 
 if ($id) {
     $cm         = get_coursemodule_from_id('heatmap', $id, 0, false, MUST_EXIST);
@@ -67,12 +67,7 @@ $PAGE->requires->js(new moodle_url('/mod/heatmap/data/data.js'));
 $PAGE->requires->js(new moodle_url('/mod/heatmap/javascript/toggler.js'));
 $PAGE->add_body_class('content-only'); // Hide all blocks
 
-/*
- * Other things you may want to set - remove if not needed.
- * $PAGE->set_cacheable(false);
- * $PAGE->set_focuscontrol('some-html-id');
- * $PAGE->add_body_class('heatmap-'.$somevar);
- */
+
 $file = 'data/breakdown.html';
 $data = file_get_contents($file);
 
@@ -82,7 +77,7 @@ if ($heatmap->intro) {
     $heatmap->intro = '<nolink>'.$heatmap->intro.'</nolink>';
     echo $OUTPUT->box(format_module_intro('heatmap', $heatmap, $cm->id), 'generalbox mod_introbox', 'heatmapintro');
 }
-echo '<div id="mapdiv" style="width:100%; background-color:#FFFFFF; height:500px;"></div>';
+echo '<div id="mapdiv" style="width:80%; background-color:#FFFFFF; height:500px; margin:0 auto 0 auto;"></div>';
 
 if (!empty(heatmap_print_attachments($cm, 'html'))) {
     echo '<blockquote>'.heatmap_print_attachments($cm, 'html').'</blockquote>';

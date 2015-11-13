@@ -32,7 +32,7 @@ $string['modulename'] = 'Heatmap';
 $string['modulenameplural'] = 'Heatmaps';
 $string['modulename_help'] = 'Use this module for displaying Heat Map of participants';
 $string['heatmapfieldset'] = 'Detailed report';
-$string['amMapfieldset'] = 'Heatmap common settings';
+$string['amMapfieldset'] = 'Heatmap settings';
 $string['heatmapname'] = 'Name of activity/page';
 $string['heatmapname_help'] = 'This is the content of the help tooltip associated with the heatmapname field. Markdown syntax is supported.';
 $string['heatmap'] = 'heatmap';
@@ -41,5 +41,7 @@ $string['pluginname'] = 'heatmap';
 $string['crondescription'] = 'Update Heatmap data';
 $string['moduleheader'] = 'Origin of participants';
 $string['downloadtitle'] = 'Download detailed report';
-$string['displaytotal'] = 'As of <span class="total">{$a->date}(EST)</span> {$a->sitename} had <span class="total">{$a->totalparticipants}</span> Registered Participants from <span class="total">{$a->totalcountries}</span> Countries.';
+$string['total'] = 'As of <span class="total">{$a->date}(EST)</span> {$a->sitename} had <span class="total">{$a->totalparticipants}</span> Registered Participants from <span class="total">{$a->totalcountries}</span> Countries.';
+$string['displaytotal'] = 'Display total number of users';
+$string['displaycontinentbreakdown'] = 'Display continental breakdown';
 

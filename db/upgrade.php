@@ -159,6 +159,29 @@ function xmldb_heatmap_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2015093003, 'heatmap');
     }
 
+    if ($oldversion < 2015111300) {
+
+        // Insert code here to perform some actions (same as in install.php).
+        // Define index course (not unique) to be added to heatmap.
+        $table = new xmldb_table('heatmap');
+        $field = new xmldb_field('displaytotal', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'attachment');
+
+        // Add index to course field.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('heatmap');
+        $field = new xmldb_field('displaycontinentbreakdown', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'displaytotal');
+
+        // Add index to course field.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_mod_savepoint(true, 2015111300, 'heatmap');
+    }
+
     /*
      * And that's all. Please, examine and understand the 3 example blocks above. Also
      * it's interesting to look how other modules are using this script. Remember that
