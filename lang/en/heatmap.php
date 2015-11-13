@@ -41,5 +41,5 @@ $string['pluginname'] = 'heatmap';
 $string['crondescription'] = 'Update Heatmap data';
 $string['moduleheader'] = 'Origin of participants';
 $string['downloadtitle'] = 'Download detailed report';
-$string['displaytotal'] = 'As of <span class="total">{$a->date}(EST)</span> TRREE had <span class="total">{$a->totalparticipants}</span> Registered Participants from <span class="total">{$a->totalcountries}</span> Countries.';
+$string['displaytotal'] = 'As of <span class="total">{$a->date}(EST)</span> {$a->sitename} had <span class="total">{$a->totalparticipants}</span> Registered Participants from <span class="total">{$a->totalcountries}</span> Countries.';
 

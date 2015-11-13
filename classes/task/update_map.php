@@ -13,7 +13,7 @@ class update_map extends \core\task\scheduled_task
 
 	public function execute()
 	{
-		global $DB, $CFG;
+		global $DB, $CFG, $SITE;
 
 		$country = get_string_manager()->get_list_of_countries();
 		$continent = array('EU' => 'Europe', 'AF' => 'Africa', 'AS' => 'Asia', 'NA' => 'North-America', 'SA' => 'South-America', 'OC' => 'Oceania');
@@ -82,7 +82,7 @@ EOV;
 
 		// Storing country breakdown
 		$fc = fopen($CFG->dirroot . '/mod/heatmap/data/breakdown.html', 'w');
-		$a = array('date' => date("F j, Y \a\\t H\hi"), 'totalparticipants' => number_format($totalparticipants), 'totalcountries' => $totalcountries);
+		$a = array('date' => date("F j, Y \a\\t H\hi"), 'totalparticipants' => number_format($totalparticipants), 'totalcountries' => $totalcountries, 'sitename' => format_string($SITE->shortname));
 		fputs($fc, '<div class="totalparticipants"><img src="'.$CFG->wwwroot.'/mod/heatmap/pix/participants.png" width="16" height="16"> '.get_string('displaytotal', 'heatmap', $a).'</div>' . chr(10));
 		foreach ($continent as $iso2 => $continentName) {
 			if(isset($continentInfo[$iso2])) {
