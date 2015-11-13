@@ -83,7 +83,7 @@ EOV;
 		// Storing country breakdown
 		$fc = fopen($CFG->dirroot . '/mod/heatmap/data/breakdown.html', 'w');
 		$a = array('date' => date("F j, Y \a\\t H\hi"), 'totalparticipants' => number_format($totalparticipants), 'totalcountries' => $totalcountries);
-		fputs($fc, '<div class="totalparticipants"><img src="/mod/heatmap/pix/participants.png" width="16" height="16"> '.get_string('displaytotal', 'heatmap', $a).'</div>' . chr(10));
+		fputs($fc, '<div class="totalparticipants"><img src="'.$CFG->wwwroot.'/mod/heatmap/pix/participants.png" width="16" height="16"> '.get_string('displaytotal', 'heatmap', $a).'</div>' . chr(10));
 		foreach ($continent as $iso2 => $continentName) {
 			if(isset($continentInfo[$iso2])) {
 				fputs($fc, '<ul class="toggle-view">' . chr(10));
