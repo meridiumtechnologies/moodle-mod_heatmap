@@ -55,7 +55,7 @@ EOV;
 		$continentInfo = array();
 		$totalparticipants = 0;
 		$totalcountries = 0;
-		$heatmapsettings  = $DB->get_record('heatmap', array('id' => 1), '*', MUST_EXIST);
+		$heatmapinstances  = $DB->get_records('heatmap');
 
 		$fr = fopen($CFG->dirroot . '/mod/heatmap/data/data.js', 'w');
 		fputs($fr, $header . chr(10));
@@ -81,29 +81,31 @@ EOV;
 		fputs($fr, $footer . chr(10));
 		fclose($fr);
 
-		// Storing country breakdown
-		$a = array('date' => date("F j, Y \a\\t H\hi"), 'totalparticipants' => number_format($totalparticipants), 'totalcountries' => $totalcountries, 'sitename' => format_string($SITE->shortname));
-		$fc = fopen($CFG->dirroot . '/mod/heatmap/data/breakdown.html', 'w');
-		if ($heatmapsettings->displaytotal == 1) {
-			fputs($fc, '<div class="totalparticipants"><img src="' . $CFG->wwwroot . '/mod/heatmap/pix/participants.png" width="16" height="16"> ' . get_string('total', 'heatmap', $a) . '</div>' . chr(10));
-		}
-		if ($heatmapsettings->displaycontinentbreakdown == 1) {
-			foreach ($continent as $iso2 => $continentName) {
-				if (isset($continentInfo[$iso2])) {
-					fputs($fc, '<ul class="toggle-view">' . chr(10));
-					$numberofcountries = count($continentInfo[$iso2]['countries']);
-					fputs($fc, '<li><h3>' . $continentName . '</h3><span> +</span> <div>' . number_format($continentInfo[$iso2]['totalparticipants']) . ' participants from ' . $numberofcountries . ' countries</div><div class="panel">' . chr(10));
-					fputs($fc, '<ul>' . chr(10));
-					foreach ($continentInfo[$iso2]['countries'] as $currentCountry) {
-						$flag = (file_exists($CFG->dirroot . '/mod/heatmap/pix/flag/' . strtolower($currentCountry['iso']) . '.png')) ? $CFG->wwwroot . '/mod/heatmap/pix/flag/' . strtolower($currentCountry['iso']) . '.png' : $CFG->wwwroot . '/mod/heatmap/pix/flag/notfound.png';
-						fputs($fc, '<li><img src="' . $flag . '" />' . $currentCountry['countryname'] . ' => ' . number_format($currentCountry['participants']) . '</li>' . chr(10));
-					}
-					fputs($fc, '</ul></div></li>' . chr(10));
-				}
+		// Storing continent breakdown for all module instances
+		foreach($heatmapinstances as $instance => $setting) {
+			$a = array('date' => date("F j, Y \a\\t H\hi"), 'totalparticipants' => number_format($totalparticipants), 'totalcountries' => $totalcountries, 'sitename' => format_string($SITE->shortname));
+			$fc = fopen($CFG->dirroot . '/mod/heatmap/data/breakdown-'.$instance.'.html', 'w');
+			if ($setting->displaytotal == 1) {
+				fputs($fc, '<div class="totalparticipants"><img src="' . $CFG->wwwroot . '/mod/heatmap/pix/participants.png" width="16" height="16"> ' . get_string('total', 'heatmap', $a) . '</div>' . chr(10));
 			}
-			fputs($fc, '</ul>' . chr(10));
+			if ($setting->displaycontinentbreakdown == 1) {
+				foreach ($continent as $iso2 => $continentName) {
+					if (isset($continentInfo[$iso2])) {
+						fputs($fc, '<ul class="toggle-view">' . chr(10));
+						$numberofcountries = count($continentInfo[$iso2]['countries']);
+						fputs($fc, '<li><h3>' . $continentName . '</h3><span> +</span> <div>' . number_format($continentInfo[$iso2]['totalparticipants']) . ' participants from ' . $numberofcountries . ' countries</div><div class="panel">' . chr(10));
+						fputs($fc, '<ul>' . chr(10));
+						foreach ($continentInfo[$iso2]['countries'] as $currentCountry) {
+							$flag = (file_exists($CFG->dirroot . '/mod/heatmap/pix/flag/' . strtolower($currentCountry['iso']) . '.png')) ? $CFG->wwwroot . '/mod/heatmap/pix/flag/' . strtolower($currentCountry['iso']) . '.png' : $CFG->wwwroot . '/mod/heatmap/pix/flag/notfound.png';
+							fputs($fc, '<li><img src="' . $flag . '" />' . $currentCountry['countryname'] . ' => ' . number_format($currentCountry['participants']) . '</li>' . chr(10));
+						}
+						fputs($fc, '</ul></div></li>' . chr(10));
+					}
+				}
+				fputs($fc, '</ul>' . chr(10));
+			}
+			fclose($fc);
 		}
-		fclose($fc);
 	}
 }
 ?>

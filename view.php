@@ -42,7 +42,6 @@ if ($id) {
 } else {
     error('You must specify a course_module ID or an instance ID');
 }
-
 require_login($course, true, $cm);
 
 $event = \mod_heatmap\event\course_module_viewed::create(array(
@@ -67,9 +66,8 @@ $PAGE->requires->js(new moodle_url('/mod/heatmap/data/data.js'));
 $PAGE->requires->js(new moodle_url('/mod/heatmap/javascript/toggler.js'));
 $PAGE->add_body_class('content-only'); // Hide all blocks
 
-
-$file = 'data/breakdown.html';
-$data = file_get_contents($file);
+$ammapdatafile = 'data/data.js';
+$breakdownfile = 'data/breakdown-'.$cm->instance.'.html';
 
 // Output starts here.
 echo $OUTPUT->header();
@@ -77,12 +75,15 @@ if ($heatmap->intro) {
     $heatmap->intro = '<nolink>'.$heatmap->intro.'</nolink>';
     echo $OUTPUT->box(format_module_intro('heatmap', $heatmap, $cm->id), 'generalbox mod_introbox', 'heatmapintro');
 }
-echo '<div id="mapdiv" style="width:80%; background-color:#FFFFFF; height:500px; margin:0 auto 0 auto;"></div>';
-
-if (!empty(heatmap_print_attachments($cm, 'html'))) {
-    echo '<blockquote>'.heatmap_print_attachments($cm, 'html').'</blockquote>';
+if(!file_exists($ammapdatafile) || !file_exists($breakdownfile)) {
+    echo '<strong>Oups! Unable to find datafiles! Make sure your run heatmap task at leat once through cron!</strong>';
 }
-echo $data;
+else {
+    echo '<div id="mapdiv" style="width:80%; background-color:#FFFFFF; height:500px; margin:0 auto 0 auto;"></div>';
 
-// Finish the page.
+    if (!empty(heatmap_print_attachments($cm, 'html'))) {
+        echo '<blockquote>' . heatmap_print_attachments($cm, 'html') . '</blockquote>';
+    }
+    echo file_get_contents($breakdownfile);
+}// Finish the page.
 echo $OUTPUT->footer();
