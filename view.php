@@ -21,13 +21,11 @@
  * if you like, and it can span multiple lines.
  *
  * @package    mod_heatmap
- * @copyright  2015 Your Name
+ * @copyright  2015 Meridium Technologies
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// Replace heatmap with the name of your module and remove this line.
-
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+require_once(dirname(dirname(dirname($_SERVER["SCRIPT_FILENAME"]))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
@@ -62,6 +60,7 @@ $PAGE->set_title(format_string($heatmap->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->requires->css(new moodle_url('/mod/heatmap/vendor/ammap.css'));
 $PAGE->requires->css(new moodle_url('/mod/heatmap/stylesheets/styles.css'));
+$PAGE->requires->js(new moodle_url('/mod/heatmap/javascript/jquery-1.7.2.min.js'));
 $PAGE->requires->js(new moodle_url('/mod/heatmap/vendor/ammap.js'));
 $PAGE->requires->js(new moodle_url('/mod/heatmap/vendor/maps/js/worldLow.js'));
 $PAGE->requires->js(new moodle_url('/mod/heatmap/data/data.js'));

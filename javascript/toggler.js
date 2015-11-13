@@ -1,7 +1,5 @@
-/**
- * Created by seb on 15-10-22.
- */
-$(document).ready(function () {
+
+jQuery(document).ready(function($) {
 
     $('.toggle-view li').click(function () {
 
@@ -16,5 +14,4 @@ $(document).ready(function () {
         }
 
     });
-
 });
