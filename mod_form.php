@@ -74,6 +74,9 @@ class mod_heatmap_mod_form extends moodleform_mod
         $mform->addElement('selectyesno', 'displaycontinentbreakdown', get_string('displaycontinentbreakdown', 'heatmap'));
         $mform->setDefault('displaycontinentbreakdown', 1);
 
+        $mform->addElement('selectyesno', 'lockemptycountries', get_string('lockemptycountries', 'heatmap'));
+        $mform->setDefault('lockemptycountries', 1);
+
         //-------------------------------------------------------
         // Add filemanager for monthly statistics
         $mform->addElement('header', 'heatmapfieldset', get_string('heatmapfieldset', 'heatmap'));

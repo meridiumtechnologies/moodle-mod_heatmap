@@ -164,7 +164,7 @@ function xmldb_heatmap_upgrade($oldversion) {
         // Insert code here to perform some actions (same as in install.php).
         // Define index course (not unique) to be added to heatmap.
         $table = new xmldb_table('heatmap');
-        $field = new xmldb_field('displaytotal', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'attachment');
+        $field = new xmldb_field('displaytotal', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'attachment');
 
         // Add index to course field.
         if (!$dbman->field_exists($table, $field)) {
@@ -172,7 +172,7 @@ function xmldb_heatmap_upgrade($oldversion) {
         }
 
         $table = new xmldb_table('heatmap');
-        $field = new xmldb_field('displaycontinentbreakdown', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'displaytotal');
+        $field = new xmldb_field('displaycontinentbreakdown', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'displaytotal');
 
         // Add index to course field.
         if (!$dbman->field_exists($table, $field)) {
@@ -182,17 +182,18 @@ function xmldb_heatmap_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2015111300, 'heatmap');
     }
 
-    /*
-     * And that's all. Please, examine and understand the 3 example blocks above. Also
-     * it's interesting to look how other modules are using this script. Remember that
-     * the basic idea is to have "blocks" of code (each one being executed only once,
-     * when the module version (version.php) is updated.
-     *
-     * Lines above (this included) MUST BE DELETED once you get the first version of
-     * yout module working. Each time you need to modify something in the module (DB
-     * related, you'll raise the version and add one upgrade block here.
-     *
-     * Finally, return of upgrade result (true, all went good) to Moodle.
-     */
+    if ($oldversion < 2015111301) {
+
+        // Insert code here to perform some actions (same as in install.php).
+        // Define index course (not unique) to be added to heatmap.
+        $table = new xmldb_table('heatmap');
+        $field = new xmldb_field('lockemptycountries', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'displaycontinentbreakdown');
+
+        // Add index to course field.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2015111301, 'heatmap');
+    }
     return true;
 }

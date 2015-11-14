@@ -44,4 +44,5 @@ $string['downloadtitle'] = 'Download detailed report';
 $string['total'] = 'As of <span class="total">{$a->date}(EST)</span> {$a->sitename} had <span class="total">{$a->totalparticipants}</span> Registered Participants from <span class="total">{$a->totalcountries}</span> Countries.';
 $string['displaytotal'] = 'Display total number of users';
 $string['displaycontinentbreakdown'] = 'Display continental breakdown';
+$string['lockemptycountries'] = 'Lock countries with no users';
 

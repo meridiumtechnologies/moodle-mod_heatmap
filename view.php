@@ -17,9 +17,6 @@
 /**
  * Prints a particular instance of heatmap
  *
- * You can have a rather longer description of the file as well,
- * if you like, and it can span multiple lines.
- *
  * @package    mod_heatmap
  * @copyright  2015 Meridium Technologies
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -52,8 +49,16 @@ $event->add_record_snapshot('course', $PAGE->course);
 $event->add_record_snapshot($PAGE->cm->modname, $heatmap);
 $event->trigger();
 
-// Print the page header.
+$heatmapdata = 'data/';
+$ammapdatafile = $heatmapdata.'data-'.$cm->instance.'.js';
+$breakdownfile = $heatmapdata.'breakdown-'.$cm->instance.'.html';
 
+if(!file_exists($ammapdatafile) || !file_exists($breakdownfile)) {
+    throw new file_exception("Unable to find source files in data directory! \n\r Make sure your run heatmap task at leat once through cron!", $heatmapdata);
+}
+
+
+// Print the page header.
 $PAGE->set_url('/mod/heatmap/view.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($heatmap->name));
 $PAGE->set_heading(format_string($course->fullname));
@@ -62,12 +67,10 @@ $PAGE->requires->css(new moodle_url('/mod/heatmap/stylesheets/styles.css'));
 $PAGE->requires->js(new moodle_url('/mod/heatmap/javascript/jquery-1.7.2.min.js'));
 $PAGE->requires->js(new moodle_url('/mod/heatmap/vendor/ammap.js'));
 $PAGE->requires->js(new moodle_url('/mod/heatmap/vendor/maps/js/worldLow.js'));
-$PAGE->requires->js(new moodle_url('/mod/heatmap/data/data.js'));
+$PAGE->requires->js(new moodle_url('/mod/heatmap/'.$ammapdatafile));
 $PAGE->requires->js(new moodle_url('/mod/heatmap/javascript/toggler.js'));
 $PAGE->add_body_class('content-only'); // Hide all blocks
 
-$ammapdatafile = 'data/data.js';
-$breakdownfile = 'data/breakdown-'.$cm->instance.'.html';
 
 // Output starts here.
 echo $OUTPUT->header();
@@ -75,15 +78,11 @@ if ($heatmap->intro) {
     $heatmap->intro = '<nolink>'.$heatmap->intro.'</nolink>';
     echo $OUTPUT->box(format_module_intro('heatmap', $heatmap, $cm->id), 'generalbox mod_introbox', 'heatmapintro');
 }
-if(!file_exists($ammapdatafile) || !file_exists($breakdownfile)) {
-    echo '<strong>Oups! Unable to find datafiles! Make sure your run heatmap task at leat once through cron!</strong>';
+// Render ammap area
+echo '<div id="mapdiv" style="width:80%; background-color:#FFFFFF; height:500px; margin:0 auto 0 auto;"></div>';
+// Render attached file, if any
+if (!empty(heatmap_print_attachments($cm, 'html'))) {
+    echo '<blockquote>' . heatmap_print_attachments($cm, 'html') . '</blockquote>';
 }
-else {
-    echo '<div id="mapdiv" style="width:80%; background-color:#FFFFFF; height:500px; margin:0 auto 0 auto;"></div>';
-
-    if (!empty(heatmap_print_attachments($cm, 'html'))) {
-        echo '<blockquote>' . heatmap_print_attachments($cm, 'html') . '</blockquote>';
-    }
-    echo file_get_contents($breakdownfile);
-}// Finish the page.
+echo file_get_contents($breakdownfile);
 echo $OUTPUT->footer();
