@@ -81,7 +81,7 @@ if ($heatmap->intro) {
 // Render ammap area
 echo '<div id="mapdiv" style="width:80%; background-color:#FFFFFF; height:500px; margin:0 auto 0 auto;"></div>';
 // Render attached file, if any
-if (!empty(heatmap_print_attachments($cm, 'html'))) {
+if (heatmap_print_attachments($cm, 'html') == TRUE) {
     echo '<blockquote>' . heatmap_print_attachments($cm, 'html') . '</blockquote>';
 }
 echo file_get_contents($breakdownfile);
