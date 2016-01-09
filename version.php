@@ -28,7 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_heatmap';
-$plugin->version = 2016080100;
+$plugin->version = 2016080102;
 $plugin->release = 'v1.1';
 $plugin->requires = 2014051200;
 $plugin->maturity = MATURITY_ALPHA;

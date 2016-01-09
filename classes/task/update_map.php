@@ -74,9 +74,11 @@ class update_map extends \core\task\scheduled_task
 
 		// Getting all heatmap instances and generating corresponding data
 		$heatmapinstances  = $DB->get_records('heatmap');
-		foreach($heatmapinstances as $instance => $setting) {
+		foreach($heatmapinstances as $instance => $heatmap) {
 
-			$activateallcountries = ($setting->lockemptycountries == 1 ? 'false' : 'true');
+			$breakdowndata = '';
+
+			$activateallcountries = ($heatmap->lockemptycountries == 1 ? 'false' : 'true');
 
 			$header = <<<EOT
 			var map;
@@ -107,36 +109,36 @@ EOT;
 			});
 EOV;
 
-			// Storing map settings and data for all module instances
-			$fr = fopen($CFG->dirroot . '/mod/heatmap/data/data-'.$instance.'.js', 'w');
-			fputs($fr, $header . chr(10));
-			fputs($fr, $listOfCountries);
-			fputs($fr, $footer . chr(10));
-			fclose($fr);
-
-			// Storing continent breakdown for all module instances
+			// Building continent breakdown
 			$a = array('date' => date("F j, Y \a\\t H\hi"), 'totalparticipants' => number_format($totalparticipants), 'totalcountries' => $totalcountries, 'sitename' => format_string($SITE->shortname), 'timezone' => date_default_timezone_get());
-			$fc = fopen($CFG->dirroot . '/mod/heatmap/data/breakdown-'.$instance.'.html', 'w');
-			if ($setting->displaytotal == 1) {
-				fputs($fc, '<div class="totalparticipants"><img src="' . $CFG->wwwroot . '/mod/heatmap/pix/participants.png" width="16" height="16"> ' . get_string('total', 'heatmap', $a) . '</div>' . chr(10));
+			if ($heatmap->displaytotal == 1) {
+				$breakdowndata .= '<div class="totalparticipants"><img src="' . $CFG->wwwroot . '/mod/heatmap/pix/participants.png" width="16" height="16"> ' . get_string('total', 'heatmap', $a) . '</div>' . chr(10);
 			}
-			if ($setting->displaycontinentbreakdown == 1) {
+			if ($heatmap->displaycontinentbreakdown == 1) {
 				foreach ($continents as $continent) {
 					if (isset($continentInfo[$continent])) {
-						fputs($fc, '<ul class="toggle-view">' . chr(10));
+						$breakdowndata .= '<ul class="toggle-view">' . chr(10);
 						$a = array('numberOfCountries' => count($continentInfo[$continent]['countries']), 'numberOfParticipants' => number_format($continentInfo[$continent]['totalparticipants']));
-						fputs($fc, '<li><h3>' . get_string($continent, 'heatmap') . '</h3><span> +</span> <div>'. get_string('continentBreakdown','heatmap', $a) .'</div><div class="panel">' . chr(10));
-						fputs($fc, '<ul>' . chr(10));
+						$breakdowndata .= '<li><h3>' . get_string($continent, 'heatmap') . '</h3><span> +</span> <div>'. get_string('continentBreakdown','heatmap', $a) .'</div><div class="panel">' . chr(10);
+						$breakdowndata .= '<ul>' . chr(10);
 						foreach ($continentInfo[$continent]['countries'] as $currentCountry) {
 							$flag = (file_exists($CFG->dirroot . '/mod/heatmap/pix/flag/' . strtolower($currentCountry['iso']) . '.png')) ? $CFG->wwwroot . '/mod/heatmap/pix/flag/' . strtolower($currentCountry['iso']) . '.png' : $CFG->wwwroot . '/mod/heatmap/pix/flag/notfound.png';
-							fputs($fc, '<li><img src="' . $flag . '" />' . $currentCountry['countryname'] . ' => ' . number_format($currentCountry['participants']) . '</li>' . chr(10));
+							$breakdowndata .= '<li><img src="' . $flag . '" />' . $currentCountry['countryname'] . ' => ' . number_format($currentCountry['participants']) . '</li>' . chr(10);
 						}
-						fputs($fc, '</ul></div></li>' . chr(10));
+						$breakdowndata .= '</ul></div></li>' . chr(10);
 					}
 				}
-				fputs($fc, '</ul>' . chr(10));
+				$breakdowndata .= '</ul>' . chr(10);
 			}
-			fclose($fc);
+			$data = array();
+			$data['id']= $heatmap->id;
+			$data['mapdata'] = $header . $listOfCountries . $footer;
+			$data['countinentbreakdown'] = $breakdowndata;
+			if ($DB->update_record('heatmap', $data)) {
+				echo 'Heatmap ID=' .$heatmap->id .' updated!'.chr(10);
+			} else {
+				echo 'Update failed!'. chr(10);
+			}
 		}
 	}
 }

@@ -195,5 +195,25 @@ function xmldb_heatmap_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 2015111301, 'heatmap');
     }
+    if ($oldversion < 2016080102) {
+
+        // Insert code here to perform some actions (same as in install.php).
+        // Define index course (not unique) to be added to heatmap.
+        $table = new xmldb_table('heatmap');
+        $field = new xmldb_field('mapdata', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'lockemptycountries');
+
+        // Add index to course field.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $table = new xmldb_table('heatmap');
+        $field = new xmldb_field('countinentbreakdown', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'mapdata');
+
+        // Add index to course field.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2016080102, 'heatmap');
+    }
     return true;
 }

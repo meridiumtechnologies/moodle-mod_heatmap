@@ -48,16 +48,6 @@ $event = \mod_heatmap\event\course_module_viewed::create(array(
 $event->add_record_snapshot('course', $PAGE->course);
 $event->add_record_snapshot($PAGE->cm->modname, $heatmap);
 $event->trigger();
-
-$heatmapdata = 'data/';
-$ammapdatafile = $heatmapdata.'data-'.$cm->instance.'.js';
-$breakdownfile = $heatmapdata.'breakdown-'.$cm->instance.'.html';
-
-if(!file_exists($ammapdatafile) || !file_exists($breakdownfile)) {
-    throw new file_exception("Unable to find source files in data directory! \n\r Make sure your run heatmap task at leat once through cron!", $heatmapdata);
-}
-
-
 // Print the page header.
 $PAGE->set_url('/mod/heatmap/view.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($heatmap->name));
@@ -67,7 +57,7 @@ $PAGE->requires->css(new moodle_url('/mod/heatmap/stylesheets/styles.css'));
 $PAGE->requires->js(new moodle_url('/mod/heatmap/javascript/jquery-1.7.2.min.js'));
 $PAGE->requires->js(new moodle_url('/mod/heatmap/vendor/ammap.js'));
 $PAGE->requires->js(new moodle_url('/mod/heatmap/vendor/maps/js/worldLow.js'));
-$PAGE->requires->js(new moodle_url('/mod/heatmap/'.$ammapdatafile));
+$PAGE->requires->js_init_code($heatmap->mapdata); // TO BE VERIFIED!!!
 $PAGE->requires->js(new moodle_url('/mod/heatmap/javascript/toggler.js'));
 $PAGE->add_body_class('content-only'); // Hide all blocks
 
@@ -78,11 +68,16 @@ if ($heatmap->intro) {
     $heatmap->intro = '<nolink>'.$heatmap->intro.'</nolink>';
     echo $OUTPUT->box(format_module_intro('heatmap', $heatmap, $cm->id), 'generalbox mod_introbox', 'heatmapintro');
 }
+
 // Render ammap area
 echo '<div id="mapdiv" style="width:80%; background-color:#FFFFFF; height:500px; margin:0 auto 0 auto;"></div>';
+
 // Render attached file, if any
 if (heatmap_print_attachments($cm, 'html') == TRUE) {
     echo '<blockquote>' . heatmap_print_attachments($cm, 'html') . '</blockquote>';
 }
-echo file_get_contents($breakdownfile);
+// Render continent breakdown
+if($heatmap->displaycontinentbreakdown == 1) {
+    echo $heatmap->countinentbreakdown;
+}
 echo $OUTPUT->footer();
