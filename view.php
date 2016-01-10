@@ -61,6 +61,12 @@ $PAGE->requires->js_init_code($heatmap->mapdata); // TO BE VERIFIED!!!
 $PAGE->requires->js(new moodle_url('/mod/heatmap/javascript/toggler.js'));
 $PAGE->add_body_class('content-only'); // Hide all blocks
 
+if($heatmap->mapdata == ''){
+    echo $OUTPUT->header();
+    echo get_string('nodata', 'heatmap');
+    echo $OUTPUT->footer();
+    exit;
+}
 
 // Output starts here.
 echo $OUTPUT->header();
@@ -72,12 +78,17 @@ if ($heatmap->intro) {
 // Render ammap area
 echo '<div id="mapdiv" style="width:80%; background-color:#FFFFFF; height:500px; margin:0 auto 0 auto;"></div>';
 
+if ($heatmap->displaytotal == 1) {
+    echo $heatmap->totals;
+}
+
 // Render attached file, if any
 if (heatmap_print_attachments($cm, 'html') == TRUE) {
     echo '<blockquote>' . heatmap_print_attachments($cm, 'html') . '</blockquote>';
 }
+
 // Render continent breakdown
 if($heatmap->displaycontinentbreakdown == 1) {
-    echo $heatmap->countinentbreakdown;
+    echo $heatmap->continentbreakdown;
 }
 echo $OUTPUT->footer();

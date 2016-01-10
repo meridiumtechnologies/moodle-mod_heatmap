@@ -42,6 +42,7 @@ class update_map extends \core\task\scheduled_task
 		$totalparticipants = 0;
 		$totalcountries = 0;
 		$listOfCountries = '';
+		$maxvalue = 0;
 
 		$country = get_string_manager()->get_list_of_countries();
 		$continents = array('EU', 'AF', 'AS', 'NA', 'SA', 'OC');
@@ -67,15 +68,17 @@ class update_map extends \core\task\scheduled_task
 				}
 				array_push($continentInfo[$countryByContinent[$key]]['countries'], $countryInfo[$key]);
 				$totalparticipants += $value;
+				if($value > $maxvalue){
+					$maxvalue = $value;
+				}
 				$totalcountries++;
 			}
 		}
-		$maxValue = ceil($totalparticipants/10) * 10;
+		$maxvalue = ceil($maxvalue/10) * 10 - 10;
 
 		// Getting all heatmap instances and generating corresponding data
 		$heatmapinstances  = $DB->get_records('heatmap');
 		foreach($heatmapinstances as $instance => $heatmap) {
-
 			$breakdowndata = '';
 
 			$activateallcountries = ($heatmap->lockemptycountries == 1 ? 'false' : 'true');
@@ -103,37 +106,42 @@ EOT;
 			    var valueLegend = new AmCharts.ValueLegend();
 			    valueLegend.right = 10;
 			    valueLegend.minValue = "0";
-			    valueLegend.maxValue = "$maxValue+";
+			    valueLegend.maxValue = "$maxvalue+";
 			    map.valueLegend = valueLegend;
 			    map.write("mapdiv");
 			});
 EOV;
 
-			// Building continent breakdown
-			$a = array('date' => date("F j, Y \a\\t H\hi"), 'totalparticipants' => number_format($totalparticipants), 'totalcountries' => $totalcountries, 'sitename' => format_string($SITE->shortname), 'timezone' => date_default_timezone_get());
-			if ($heatmap->displaytotal == 1) {
-				$breakdowndata .= '<div class="totalparticipants"><img src="' . $CFG->wwwroot . '/mod/heatmap/pix/participants.png" width="16" height="16"> ' . get_string('total', 'heatmap', $a) . '</div>' . chr(10);
-			}
-			if ($heatmap->displaycontinentbreakdown == 1) {
+			// Total number of registered participants
+			$a = array(	'date' => date("F j, Y \a\\t H\hi"), 'totalparticipants' => number_format($totalparticipants),
+						'totalcountries' => $totalcountries, 'sitename' => format_string($SITE->shortname),
+						'timezone' => date_default_timezone_get());
+
+			$total = '<div class="totalparticipants"><img src="' . $CFG->wwwroot . '/mod/heatmap/pix/participants.png" width="16" height="16"> ' . get_string('total', 'heatmap', $a) . '</div>' . chr(10);
+
+			// Continent breakdown
 				foreach ($continents as $continent) {
 					if (isset($continentInfo[$continent])) {
 						$breakdowndata .= '<ul class="toggle-view">' . chr(10);
-						$a = array('numberOfCountries' => count($continentInfo[$continent]['countries']), 'numberOfParticipants' => number_format($continentInfo[$continent]['totalparticipants']));
+
+						$a = array(	'numberOfCountries' => count($continentInfo[$continent]['countries']),
+									'numberOfParticipants' => number_format($continentInfo[$continent]['totalparticipants']));
+
 						$breakdowndata .= '<li><h3>' . get_string($continent, 'heatmap') . '</h3><span> +</span> <div>'. get_string('continentBreakdown','heatmap', $a) .'</div><div class="panel">' . chr(10);
 						$breakdowndata .= '<ul>' . chr(10);
 						foreach ($continentInfo[$continent]['countries'] as $currentCountry) {
 							$flag = (file_exists($CFG->dirroot . '/mod/heatmap/pix/flag/' . strtolower($currentCountry['iso']) . '.png')) ? $CFG->wwwroot . '/mod/heatmap/pix/flag/' . strtolower($currentCountry['iso']) . '.png' : $CFG->wwwroot . '/mod/heatmap/pix/flag/notfound.png';
 							$breakdowndata .= '<li><img src="' . $flag . '" />' . $currentCountry['countryname'] . ' => ' . number_format($currentCountry['participants']) . '</li>' . chr(10);
 						}
-						$breakdowndata .= '</ul></div></li>' . chr(10);
+						$breakdowndata .= '</ul></div></li></ul>' . chr(10);
 					}
 				}
-				$breakdowndata .= '</ul>' . chr(10);
-			}
+			// Storing data back to heatmap record
 			$data = array();
 			$data['id']= $heatmap->id;
 			$data['mapdata'] = $header . $listOfCountries . $footer;
-			$data['countinentbreakdown'] = $breakdowndata;
+			$data['continentbreakdown'] = $breakdowndata;
+			$data['totals'] = $total;
 			if ($DB->update_record('heatmap', $data)) {
 				echo 'Heatmap ID=' .$heatmap->id .' updated!'.chr(10);
 			} else {

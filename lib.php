@@ -17,7 +17,7 @@
 /**
  * Library of interface functions and constants for module heatmap
  *
- * All the core Moodle functions, neeeded to allow the module to work
+ * All the core Moodle functions, needed to allow the module to work
  * integrated in Moodle should be placed here.
  *
  * All the heatmap specific functions, needed to implement all the module
@@ -30,11 +30,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-
-/**
- * Example constant, you probably want to remove this :-)
- */
-define('NEWMODULE_ULTIMATE_ANSWER', 42);
 
 /* Moodle core API */
 
@@ -84,8 +79,6 @@ function heatmap_add_instance(stdClass $heatmap, mod_heatmap_mod_form $mform = n
     $heatmap->timecreated = time();
     $draftitemid = $heatmap->attachment;
 
-    // You may have to add extra stuff in here.
-
     $heatmap->id = $DB->insert_record('heatmap', $heatmap);
     $context = context_module::instance($cmid);
 
@@ -113,8 +106,6 @@ function heatmap_update_instance(stdClass $heatmap, mod_heatmap_mod_form $mform 
     $heatmap->timemodified = time();
     $heatmap->id = $heatmap->instance;
     $draftitemid = $heatmap->attachment;
-
-    // You may have to add extra stuff in here.
 
     $result = $DB->update_record('heatmap', $heatmap);
     $context = context_module::instance($cmid);
@@ -508,7 +499,6 @@ function heatmap_print_attachments($cm, $type=NULL) {
                 $output .= "<a href=\"$path\">$iconimage</a> ";
                 $output .= "<a href=\"$path\">".get_string('downloadtitle', 'heatmap')."</a> <span class=\"datetime\">File updated on $timecreated</span>";
                 $output .= "<br />";
-                #echo($output);
 
             } else if ($type == 'text') {
                 $output .= "$strattachment ".s($filename).":\n$path\n";

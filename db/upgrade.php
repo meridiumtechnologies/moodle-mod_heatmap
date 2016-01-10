@@ -42,33 +42,7 @@ function xmldb_heatmap_upgrade($oldversion) {
 
     $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
-    /*
-     * And upgrade begins here. For each one, you'll need one
-     * block of code similar to the next one. Please, delete
-     * this comment lines once this file start handling proper
-     * upgrade code.
-     *
-     * if ($oldversion < YYYYMMDD00) { //New version in version.php
-     * }
-     *
-     * Lines below (this included)  MUST BE DELETED once you get the first version
-     * of your module ready to be installed. They are here only
-     * for demonstrative purposes and to show how the heatmap
-     * iself has been upgraded.
-     *
-     * For each upgrade block, the file heatmap/version.php
-     * needs to be updated . Such change allows Moodle to know
-     * that this file has to be processed.
-     *
-     * To know more about how to write correct DB upgrade scripts it's
-     * highly recommended to read information available at:
-     *   http://docs.moodle.org/en/Development:XMLDB_Documentation
-     * and to play with the XMLDB Editor (in the admin menu) and its
-     * PHP generation posibilities.
-     *
-     * First example, some fields were added to install.xml on 2007/04/01
-     */
-    if ($oldversion < 2007040100) {
+    if ($oldversion < 2016010900) {
 
         // Define field course to be added to heatmap.
         $table = new xmldb_table('heatmap');
@@ -79,39 +53,9 @@ function xmldb_heatmap_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Define field intro to be added to heatmap.
-        $table = new xmldb_table('heatmap');
-        $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'name');
-
-        // Add field intro.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Define field introformat to be added to heatmap.
-        $table = new xmldb_table('heatmap');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-            'intro');
-
-        // Add field introformat.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Once we reach this point, we can store the new version and consider the module
-        // ... upgraded to the version 2007040100 so the next time this block is skipped.
-        upgrade_mod_savepoint(true, 2007040100, 'heatmap');
-    }
-
-    // Second example, some hours later, the same day 2007/04/01
-    // ... two more fields and one index were added to install.xml (note the micro increment
-    // ... "01" in the last two digits of the version).
-    if ($oldversion < 2007040101) {
-
         // Define field timecreated to be added to heatmap.
         $table = new xmldb_table('heatmap');
-        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-            'introformat');
+        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'course');
 
         // Add field timecreated.
         if (!$dbman->field_exists($table, $field)) {
@@ -120,53 +64,37 @@ function xmldb_heatmap_upgrade($oldversion) {
 
         // Define field timemodified to be added to heatmap.
         $table = new xmldb_table('heatmap');
-        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-            'timecreated');
+        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'timecreated');
 
         // Add field timemodified.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        // Define index course (not unique) to be added to heatmap.
         $table = new xmldb_table('heatmap');
-        $index = new xmldb_index('courseindex', XMLDB_INDEX_NOTUNIQUE, array('course'));
+        $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'timemodified');
 
-        // Add index to course field.
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
-        // Another save point reached.
-        upgrade_mod_savepoint(true, 2007040101, 'heatmap');
-    }
-
-    // Third example, the next day, 2007/04/02 (with the trailing 00),
-    // some actions were performed to install.php related with the module.
-    if ($oldversion < 2015093003) {
-
-        // Insert code here to perform some actions (same as in install.php).
-        // Define index course (not unique) to be added to heatmap.
-        $table = new xmldb_table('heatmap');
-        $field = new xmldb_field('attachment', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-            'timemodified');
-
-        // Add index to course field.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        upgrade_mod_savepoint(true, 2015093003, 'heatmap');
-    }
+        $table = new xmldb_table('heatmap');
+        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
 
-    if ($oldversion < 2015111300) {
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
 
-        // Insert code here to perform some actions (same as in install.php).
-        // Define index course (not unique) to be added to heatmap.
+        $table = new xmldb_table('heatmap');
+        $field = new xmldb_field('attachment', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'introformat');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
         $table = new xmldb_table('heatmap');
         $field = new xmldb_field('displaytotal', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'attachment');
 
-        // Add index to course field.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -174,46 +102,38 @@ function xmldb_heatmap_upgrade($oldversion) {
         $table = new xmldb_table('heatmap');
         $field = new xmldb_field('displaycontinentbreakdown', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'displaytotal');
 
-        // Add index to course field.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        upgrade_mod_savepoint(true, 2015111300, 'heatmap');
-    }
-
-    if ($oldversion < 2015111301) {
-
-        // Insert code here to perform some actions (same as in install.php).
-        // Define index course (not unique) to be added to heatmap.
         $table = new xmldb_table('heatmap');
         $field = new xmldb_field('lockemptycountries', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'displaycontinentbreakdown');
 
-        // Add index to course field.
+
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        upgrade_mod_savepoint(true, 2015111301, 'heatmap');
-    }
-    if ($oldversion < 2016080102) {
 
-        // Insert code here to perform some actions (same as in install.php).
-        // Define index course (not unique) to be added to heatmap.
         $table = new xmldb_table('heatmap');
         $field = new xmldb_field('mapdata', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'lockemptycountries');
 
-        // Add index to course field.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
         $table = new xmldb_table('heatmap');
         $field = new xmldb_field('countinentbreakdown', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'mapdata');
 
-        // Add index to course field.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        upgrade_mod_savepoint(true, 2016080102, 'heatmap');
+
+        $table = new xmldb_table('heatmap');
+        $field = new xmldb_field('totals', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'countinentbreakdown');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2016010900, 'heatmap');
     }
     return true;
 }
