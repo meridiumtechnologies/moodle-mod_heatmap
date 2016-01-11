@@ -121,14 +121,14 @@ function xmldb_heatmap_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
         $table = new xmldb_table('heatmap');
-        $field = new xmldb_field('countinentbreakdown', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'mapdata');
+        $field = new xmldb_field('continentbreakdown', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'mapdata');
 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
         $table = new xmldb_table('heatmap');
-        $field = new xmldb_field('totals', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'countinentbreakdown');
+        $field = new xmldb_field('totals', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'continentbreakdown');
 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
